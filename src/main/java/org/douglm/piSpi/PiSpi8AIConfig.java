@@ -13,6 +13,7 @@ import java.util.List;
 public class PiSpi8AIConfig<T extends PiSpi8AIChannelConfig> {
   private int spiAddress;
   private List<T> channels;
+  private String notes;
 
   public int getSpiAddress() {
     return spiAddress;
@@ -30,9 +31,18 @@ public class PiSpi8AIConfig<T extends PiSpi8AIChannelConfig> {
     channels = val;
   }
 
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(final String val) {
+    notes = val;
+  }
+
   public ToString toStringSegment(final ToString ts) {
     ts.append("spiAddress", spiAddress)
-      .append("channels", channels);
+      .append("channels", channels)
+      .append("notes", notes);
 
     return ts;
   }

@@ -15,6 +15,7 @@ public class PiSpi8DIConfig<T extends PiSpi8DIInputConfig> {
   private int spiAddress;
   private int chipAddress; // 0 to 3
   private List<T> inputs;
+  private String notes;
 
   public int getSpiAddress() {
     return spiAddress;
@@ -40,9 +41,18 @@ public class PiSpi8DIConfig<T extends PiSpi8DIInputConfig> {
     inputs = val;
   }
 
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(final String val) {
+    notes = val;
+  }
+
   public ToString toStringSegment(final ToString ts) {
     ts.append("spiAddress", spiAddress)
-      .append("inputs", inputs);
+      .append("inputs", inputs)
+      .append("notes", notes);
 
     return ts;
   }

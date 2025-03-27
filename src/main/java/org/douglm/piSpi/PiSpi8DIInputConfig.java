@@ -11,6 +11,7 @@ import org.bedework.base.ToString;
 public class PiSpi8DIInputConfig {
   private int index;
   private String name;
+  private String notes;
   private boolean highTrue; // A 1 bit is true otherwise false
 
   public int getIndex() {
@@ -29,6 +30,14 @@ public class PiSpi8DIInputConfig {
     name = val;
   }
 
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(final String val) {
+    notes = val;
+  }
+
   public boolean isHighTrue() {
     return highTrue;
   }
@@ -40,7 +49,8 @@ public class PiSpi8DIInputConfig {
   public ToString toStringSegment(final ToString ts) {
     return ts.append("index", index)
              .append("name", name)
-             .append("highTrue", highTrue);
+             .append("highTrue", highTrue)
+             .append("notes", notes);
   }
 
   public String toString() {

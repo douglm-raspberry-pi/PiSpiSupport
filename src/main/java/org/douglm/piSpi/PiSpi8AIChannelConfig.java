@@ -19,6 +19,7 @@ public class PiSpi8AIChannelConfig {
   private Mode mode;
   private int channel;
   private String name;
+  private String notes;
   private int beta; // for thermistors
   private int inputReference;
   private int inputRange;
@@ -45,6 +46,14 @@ public class PiSpi8AIChannelConfig {
 
   public void setName(final String val) {
     name = val;
+  }
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(final String val) {
+    notes = val;
   }
 
   public int getBeta() {
@@ -77,7 +86,8 @@ public class PiSpi8AIChannelConfig {
       .append("name", name)
       .append("beta", beta)
       .append("inputReference", inputReference)
-      .append("inputRange", inputRange);
+      .append("inputRange", inputRange)
+      .append("notes", notes);
 
     return ts;
   }

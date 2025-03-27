@@ -41,10 +41,10 @@ public class PiSpi8AIPlus extends SpiDevice {
   public double getTemperature(final int channel) {
     final var chanConf = getChannelConfig(channel);
     final var val = readChannel(chanConf);
-    System.out.println(val);
-    System.out.println("SH: " + rToDegCWithSh(chanConf, val));
+    debug("Read thermistor value " + val);
+    debug("SH: " + rToDegCWithSh(chanConf, val));
     final var degCBeta = rToDegCWithBeta(chanConf, val);
-    System.out.println("beta: " + degCBeta +
+    debug("beta: " + degCBeta +
                                " F: " + ((degCBeta * 1.8) + 32));
 
     return degCBeta;
