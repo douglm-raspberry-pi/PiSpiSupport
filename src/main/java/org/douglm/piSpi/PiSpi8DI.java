@@ -17,13 +17,49 @@ public class PiSpi8DI extends SpiDevice {
   /**
    *
    * @param context Pi4j
-   * @param address of chip
+   * @param config of board
    */
-  public PiSpi8DI(final PiSpi8DIConfig<?> config,
-                  final Context context,
-                  final int address) {
-    super(context, address);
+  public PiSpi8DI(final Context context,
+                  final PiSpi8DIConfig<?> config) {
+    super(context, config);
     this.config = config;
+
+    // Write to the first 2 registers
+
+    final var haAddress = config.getHardwareAddress();
+    final byte haenVal;
+    if (config.isHardwareAddressEnabled()) {
+      haenVal = 0x08;
+    } else {
+      haenVal = 0;
+    }
+
+    // Enable/disable hardware addressing based on config
+    final byte[] setHaen = {
+            (byte)(0x40 | (haAddress << 1)),	// Write command
+            (byte)0x05,	   // IOCON register
+            haenVal};	// HAEN
+    var setRes = transfer(setHaen);
+    if (setRes < 0) {
+      throw new RuntimeException("Bad result from setHaen " + setRes);
+    }
+
+    int ipol = 0;
+    for (final var input: config.getInputs()) {
+      if (input.isHighTrue()) {
+        ipol = ipol | (1 << input.getIndex());
+      }
+    }
+
+    final byte[] setDir = {
+            (byte)(0x40 | (haAddress << 1)), // Address
+            (byte)0x00, // IODIR register
+            (byte)0xFF,	// IODIR is input
+            (byte)ipol}; // IPOL - set based on input configs
+    setRes = transfer(setDir);
+    if (setRes < 0) {
+      throw new RuntimeException("Bad result from setDir " + setRes);
+    }
   }
 
   /** Return state of all inputs on device - note NOT corrected for
@@ -43,9 +79,10 @@ public class PiSpi8DI extends SpiDevice {
   }
 
   public boolean state(final int input) {
+    assert (input >= 0 && input < 8);
     final var b = readByte();
-    final var inputConfig = getInputConfig(input);
-    return inputConfig.isHighTrue() ^ (((byte)(b >> input) & 1) == 1);
+
+    return ((byte)(b >> input) & 1) == 1;
   }
 
   public PiSpi8DIInputConfig getInputConfig(final int input) {
@@ -58,18 +95,16 @@ public class PiSpi8DI extends SpiDevice {
     throw new RuntimeException("Input " + input + " not found");
   }
 
-  private int readByte() throws ProviderException {
+  private int readByte() {
     final byte[] data = new byte[3];
-    data[0] = (byte)(0x41 | (config.getChipAddress() << 1)); // Address
+    data[0] = (byte)(0x41 | (config.getHardwareAddress() << 1)); // Address
     data[1] = (byte)(0x09);    // GPIO register
-    dumpBytes("before", data);
 
-    final var res = getSpi().transfer(data, 3);
+    final var res = transfer(data);
     if (res >= 0) {
-      dumpBytes("after (" + res + ")", data);
       return Byte.toUnsignedInt(data[2]);
-    } else {
-      throw new ProviderException("Bad result " + res);
     }
+
+    throw new ProviderException("Bad result " + res);
   }
 }

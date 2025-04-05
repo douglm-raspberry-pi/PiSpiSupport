@@ -21,10 +21,14 @@ import java.security.ProviderException;
 public class PiSpi8AIPlus extends SpiDevice {
   final PiSpi8AIConfig<?> config;
 
-  public PiSpi8AIPlus(final PiSpi8AIConfig<?> config,
-                      final Context context,
-                      final int address) {
-    super(context, address);
+  /**
+   *
+   * @param context Pi4j
+   * @param config of board
+   */
+  public PiSpi8AIPlus(final Context context,
+                      final PiSpi8AIConfig<?> config) {
+    super(context, config);
     this.config = config;
   }
 

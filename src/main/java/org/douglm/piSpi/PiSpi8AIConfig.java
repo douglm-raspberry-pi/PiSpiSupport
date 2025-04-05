@@ -5,23 +5,17 @@ package org.douglm.piSpi;
 
 import org.bedework.base.ToString;
 
+import org.douglm.spi.SpiDeviceConfig;
+
 import java.util.List;
 
 /**
  * User: mike Date: 3/26/25 Time: 11:42
  */
-public class PiSpi8AIConfig<T extends PiSpi8AIChannelConfig> {
-  private int spiAddress;
+public class PiSpi8AIConfig<T extends PiSpi8AIChannelConfig>
+        extends SpiDeviceConfig {
   private List<T> channels;
   private String notes;
-
-  public int getSpiAddress() {
-    return spiAddress;
-  }
-
-  public void setSpiAddress(final int val) {
-    spiAddress = val;
-  }
 
   public List<T> getChannels() {
     return channels;
@@ -40,11 +34,9 @@ public class PiSpi8AIConfig<T extends PiSpi8AIChannelConfig> {
   }
 
   public ToString toStringSegment(final ToString ts) {
-    ts.append("spiAddress", spiAddress)
-      .append("channels", channels)
-      .append("notes", notes);
-
-    return ts;
+    return super.toStringSegment(ts)
+                .append("channels", channels)
+                .append("notes", notes);
   }
 
   public String toString() {

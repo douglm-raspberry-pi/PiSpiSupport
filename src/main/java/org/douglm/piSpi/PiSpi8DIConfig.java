@@ -5,39 +5,44 @@ package org.douglm.piSpi;
 
 import org.bedework.base.ToString;
 
+import org.douglm.spi.SpiDeviceConfig;
+
 import java.util.List;
 
 /** Configuration for the PiSpi8Di widgetlords board.
- *
+ * This board only allows inputs though the chip itself (MCP23S08)
+ * allows both input and output.
+ * <br/>
  * User: mike Date: 3/25/25 Time: 23:22
  */
-public class PiSpi8DIConfig<T extends PiSpi8DIInputConfig> {
-  private int spiAddress;
-  private int chipAddress; // 0 to 3
-  private List<T> inputs;
+public class PiSpi8DIConfig<InputConfig extends PiSpi8DIInputConfig>
+        extends SpiDeviceConfig {
+  private int hardwareAddress; // 0 to 3
+  private boolean hardwareAddressEnabled = true;
+  private List<InputConfig> inputs;
   private String notes;
 
-  public int getSpiAddress() {
-    return spiAddress;
+  public int getHardwareAddress() {
+    return hardwareAddress;
   }
 
-  public void setSpiAddress(final int val) {
-    spiAddress = val;
+  public void setHardwareAddress(final int val) {
+    hardwareAddress = val;
   }
 
-  public int getChipAddress() {
-    return chipAddress;
+  public boolean isHardwareAddressEnabled() {
+    return hardwareAddressEnabled;
   }
 
-  public void setChipAddress(final int val) {
-    chipAddress = val;
+  public void setHardwareAddressEnabled(final boolean val) {
+    hardwareAddressEnabled = val;
   }
 
-  public List<T> getInputs() {
+  public List<InputConfig> getInputs() {
     return inputs;
   }
 
-  public void setInputs(final List<T> val) {
+  public void setInputs(final List<InputConfig> val) {
     inputs = val;
   }
 
@@ -50,11 +55,10 @@ public class PiSpi8DIConfig<T extends PiSpi8DIInputConfig> {
   }
 
   public ToString toStringSegment(final ToString ts) {
-    ts.append("spiAddress", spiAddress)
-      .append("inputs", inputs)
-      .append("notes", notes);
-
-    return ts;
+    return super.toStringSegment(ts)
+                .append("hardwareAddress", hardwareAddress)
+                .append("inputs", inputs)
+                .append("notes", notes);
   }
 
   public String toString() {
