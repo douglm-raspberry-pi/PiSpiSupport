@@ -8,7 +8,16 @@ import org.douglm.spi.SpiDevice;
 
 import java.security.ProviderException;
 
-/**
+/** This board has a problem if the inputs are AC in that it will
+ * register the zero volt transitions. This leads to intermittent
+ * incorrect readings which turn out to be multiples of 8 1/3 millis
+ * apart - the time between zero transitions at 60Hz.
+ * <p>
+ * The states method will read multiple times and OR the results - in
+ * effect smoothing out the transitions.
+ * <p>
+ * This can be disabled with multiRead = false in the config.
+ * <p>
  * User: mike Date: 3/18/25 Time: 22:41
  */
 public class PiSpi8DI extends SpiDevice {
@@ -62,14 +71,19 @@ public class PiSpi8DI extends SpiDevice {
     }
   }
 
-  /** Return state of all inputs on device - note NOT corrected for
-   * high/low true.
+  /** Return state of all inputs on device.
    *
    * @return boolean array.
    */
   public boolean[] states() {
     final var res =  new boolean[8];
-    final var b = readByte();
+    var b = readByte();
+
+    if (config.isMultiRead()) {
+      for (int i = 0; i < 4; i++) {
+        b = b | readByteDelay();
+      }
+    }
 
     for (var i = 0; i < 8; i++) {
       res[i] = ((byte)(b >> i) & 1) == 1;
@@ -80,9 +94,16 @@ public class PiSpi8DI extends SpiDevice {
 
   public boolean state(final int input) {
     assert (input >= 0 && input < 8);
-    final var b = readByte();
+    return states()[input];
+  }
 
-    return ((byte)(b >> input) & 1) == 1;
+  private int readByteDelay() {
+    try {
+      Thread.sleep(1);
+    } catch (final InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return readByte();
   }
 
   public PiSpi8DIInputConfig getInputConfig(final int input) {

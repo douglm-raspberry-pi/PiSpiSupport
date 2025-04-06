@@ -19,6 +19,7 @@ public class PiSpi8DIConfig<InputConfig extends PiSpi8DIInputConfig>
         extends SpiDeviceConfig {
   private int hardwareAddress; // 0 to 3
   private boolean hardwareAddressEnabled = true;
+  private boolean multiRead = true;
   private List<InputConfig> inputs;
   private String notes;
 
@@ -36,6 +37,14 @@ public class PiSpi8DIConfig<InputConfig extends PiSpi8DIInputConfig>
 
   public void setHardwareAddressEnabled(final boolean val) {
     hardwareAddressEnabled = val;
+  }
+
+  public boolean isMultiRead() {
+    return multiRead;
+  }
+
+  public void setMultiRead(final boolean val) {
+    multiRead = val;
   }
 
   public List<InputConfig> getInputs() {
@@ -57,6 +66,7 @@ public class PiSpi8DIConfig<InputConfig extends PiSpi8DIInputConfig>
   public ToString toStringSegment(final ToString ts) {
     return super.toStringSegment(ts)
                 .append("hardwareAddress", hardwareAddress)
+                .append("multiRead", multiRead)
                 .append("inputs", inputs)
                 .append("notes", notes);
   }
